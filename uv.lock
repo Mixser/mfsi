@@ -43,7 +43,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "fusepy", specifier = "==3.0.1" },
-    { name = "zenmqtt", specifier = "==0.1.0rc2" },
+    { name = "zenmqtt", specifier = "==0.1.0rc4" },
 ]
 
 [package.metadata.requires-dev]
@@ -122,9 +122,9 @@ wheels = [
 
 [[package]]
 name = "zenmqtt"
-version = "0.1.0rc2"
+version = "0.1.0rc4"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f2/fc/d3838d131d88b1feac8620f4421ce817691a780c964d7a935fd172c153f1/zenmqtt-0.1.0rc2.tar.gz", hash = "sha256:65c062e413b0d3ee8d52327ea391fd05505756fc41b5d1ebc6c8d031a7763524", size = 44391, upload-time = "2026-10-11T18:00:58.811Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3f/85/c2db733646a5d5f14402a3660f428a344e3c75476f41857c5c51ff484f27/zenmqtt-0.1.0rc4.tar.gz", hash = "sha256:6097f28825f04880cf1a5ac0e16464297757e62e5d431b689abc024d2ed6d1a8", size = 53737, upload-time = "2026-10-11T19:59:54.829Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ef/24/55ec7acbc5442bfee24581af5e084669536750d180302ee4acd2fbdd8dae/zenmqtt-0.1.0rc2-py3-none-any.whl", hash = "sha256:d2e3337948b604250a066a2a04e15ced371e036377efc983209e30222963c4f2", size = 57375, upload-time = "2026-10-11T18:00:57.393Z" },
+    { url = "https://files.pythonhosted.org/packages/5f/9b/c0a473f29e4a1328d71e6d5e3f07505d958bf4252042b862b7030949694f/zenmqtt-0.1.0rc4-py3-none-any.whl", hash = "sha256:1edf4b7753455d353ff8a3ec06b83ca57f93219ca7094265a057e09a57048bfd", size = 66783, upload-time = "2026-10-11T19:59:53.612Z" },
 ]
