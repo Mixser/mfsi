@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mfsi"
+dynamic = ["version"]
+description = "Filesystem in userspace which keeps files as retained MQTT messages"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Mikhail Turchunovich", email = "mixser.by@gmail.com" }]
+dependencies = [
+    "zenmqtt==0.1.0rc2",
+    "fusepy==3.0.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+mfsi = "mfsi.cli:main"
+
+[tool.hatch.version]
+path = "src/mfsi/__init__.py"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
