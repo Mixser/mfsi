@@ -1,10 +1,10 @@
 import errno
 import itertools
 
-from fuse import FuseOSError, Operations, LoggingMixIn
+from fuse import FuseOSError, LoggingMixIn, Operations
 
 # Linux has no ENOATTR, ENODATA is used instead
-ENOATTR = getattr(errno, 'ENOATTR', errno.ENODATA)
+ENOATTR = getattr(errno, "ENOATTR", errno.ENODATA)
 
 
 class Filesystem(LoggingMixIn, Operations):

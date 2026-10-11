@@ -6,21 +6,33 @@ import sys
 from .device import MqttDevice
 from .storage import Storage
 
-DEFAULT_BROKER = 'tcp://mqtt.flespi.io'
+DEFAULT_BROKER = "tcp://mqtt.flespi.io"
 
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(
-        prog='mfsi',
+        prog="mfsi",
         description="Mount a filesystem which keeps files as retained MQTT messages.",
     )
 
-    parser.add_argument('mountpoint', type=str, help="Directory to mount the filesystem to.")
-    parser.add_argument('-t', '--token', type=str, default=os.environ.get('FLESPI_TOKEN'),
-                        help="Flespi MQTT token, FLESPI_TOKEN environment variable by default.")
-    parser.add_argument('-b', '--broker', type=str, default=DEFAULT_BROKER,
-                        help="Broker URL: tcp://host[:port] or mqtts://host[:port] (default: %(default)s).")
-    parser.add_argument('-v', '--verbose', action='store_true', help="Log every filesystem operation.")
+    parser.add_argument("mountpoint", type=str, help="Directory to mount the filesystem to.")
+    parser.add_argument(
+        "-t",
+        "--token",
+        type=str,
+        default=os.environ.get("FLESPI_TOKEN"),
+        help="Flespi MQTT token, FLESPI_TOKEN environment variable by default.",
+    )
+    parser.add_argument(
+        "-b",
+        "--broker",
+        type=str,
+        default=DEFAULT_BROKER,
+        help="Broker URL: tcp://host[:port] or mqtts://host[:port] (default: %(default)s).",
+    )
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", help="Log every filesystem operation."
+    )
 
     args = parser.parse_args(argv)
 
@@ -40,7 +52,7 @@ def main(argv=None):
 
         from .fs import Filesystem
     except OSError as e:
-        sys.exit("mfsi: {}. Install macFUSE (macOS) or libfuse (Linux).".format(e))
+        sys.exit(f"mfsi: {e}. Install macFUSE (macOS) or libfuse (Linux).")
 
     storage = Storage()
 

@@ -9,17 +9,17 @@ try:
     import fuse  # noqa: F401
 except OSError:
     # libfuse isn't installed: the tests don't mount anything, a stub is enough
-    stub = types.ModuleType('fuse')
+    stub = types.ModuleType("fuse")
 
     class FuseOSError(OSError):
         def __init__(self, errno):
-            super().__init__(errno, '')
+            super().__init__(errno, "")
 
     stub.FuseOSError = FuseOSError
-    stub.Operations = type('Operations', (), {})
-    stub.LoggingMixIn = type('LoggingMixIn', (), {})
+    stub.Operations = type("Operations", (), {})
+    stub.LoggingMixIn = type("LoggingMixIn", (), {})
 
-    sys.modules['fuse'] = stub
+    sys.modules["fuse"] = stub
 
 
 class RecordingDevice:

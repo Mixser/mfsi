@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 # An empty payload removes the retained message, so empty files and empty
 # folders exist only locally, and an empty payload from the broker means
 # that the file was removed.
-TOPIC_PREFIX = 'fs'
+TOPIC_PREFIX = "fs"
 
 FILE_MODE = 0o644
 FOLDER_MODE = 0o755
@@ -22,17 +22,21 @@ def _error(code, path):
 
 
 class INodeMeta:
-    __slots__ = ('st_mode',
-                 'st_ctime',
-                 'st_mtime',
-                 'st_atime',
-                 'st_nlink',
-                 'st_size',
-                 'st_uid',
-                 'st_gid',
-                 'attrs')
+    __slots__ = (
+        "st_mode",
+        "st_ctime",
+        "st_mtime",
+        "st_atime",
+        "st_nlink",
+        "st_size",
+        "st_uid",
+        "st_gid",
+        "attrs",
+    )
 
-    def __init__(self, st_mode, st_ctime, st_mtime, st_atime, st_nlink, st_size=0, st_uid=None, st_gid=None):
+    def __init__(
+        self, st_mode, st_ctime, st_mtime, st_atime, st_nlink, st_size=0, st_uid=None, st_gid=None
+    ):
         self.st_mode = st_mode
         self.st_ctime = st_ctime
         self.st_mtime = st_mtime
@@ -53,11 +57,11 @@ class INodeMeta:
         return stat.S_ISDIR(self.st_mode)
 
     def as_dict(self):
-        return {field: getattr(self, field) for field in self.__slots__ if field != 'attrs'}
+        return {field: getattr(self, field) for field in self.__slots__ if field != "attrs"}
 
 
 class INode:
-    __slots__ = ('name', 'meta', 'sub_nodes', 'parent', 'data')
+    __slots__ = ("name", "meta", "sub_nodes", "parent", "data")
 
     def __init__(self, name: str, meta: INodeMeta, data=None):
         self.name = name
@@ -65,7 +69,7 @@ class INode:
         self.sub_nodes = {}
 
         self.parent = None
-        self.data = data or b''
+        self.data = data or b""
 
     def is_directory(self):
         return self.meta.is_directory()
@@ -73,7 +77,7 @@ class INode:
     def is_file(self):
         return self.meta.is_file()
 
-    def append(self, node: 'INode'):
+    def append(self, node: "INode"):
         if not self.is_directory():
             raise ValueError("Can't add child to file")
 
@@ -95,7 +99,7 @@ class INode:
             names.append(node.name)
             node = node.parent
 
-        return '/' + '/'.join(reversed(names))
+        return "/" + "/".join(reversed(names))
 
     def walk_files(self):
         if self.is_file():
@@ -106,19 +110,19 @@ class INode:
             yield from node.walk_files()
 
     def read(self, offset, size):
-        return self.data[offset: offset + size]
+        return self.data[offset : offset + size]
 
     def write(self, data, offset=0):
         if offset > len(self.data):
-            self.data += b'\0' * (offset - len(self.data))
+            self.data += b"\0" * (offset - len(self.data))
 
-        self.data = self.data[:offset] + data + self.data[offset + len(data):]
+        self.data = self.data[:offset] + data + self.data[offset + len(data) :]
         self._touch()
 
         return len(data)
 
     def truncate(self, length):
-        self.data = self.data[:length] + b'\0' * (length - len(self.data))
+        self.data = self.data[:length] + b"\0" * (length - len(self.data))
         self._touch()
 
     def replace(self, data):
@@ -134,11 +138,15 @@ class Storage:
     def __init__(self):
         now = time.time()
 
-        meta = INodeMeta(st_mode=(stat.S_IFDIR | FOLDER_MODE),
-                         st_ctime=now, st_mtime=now, st_atime=now,
-                         st_nlink=2)
+        meta = INodeMeta(
+            st_mode=(stat.S_IFDIR | FOLDER_MODE),
+            st_ctime=now,
+            st_mtime=now,
+            st_atime=now,
+            st_nlink=2,
+        )
 
-        self._root = INode('', meta)
+        self._root = INode("", meta)
 
         self._device = None
 
@@ -150,7 +158,7 @@ class Storage:
 
     @staticmethod
     def _split(path):
-        return [name for name in path.split('/') if name]
+        return [name for name in path.split("/") if name]
 
     def _lookup(self, names):
         node = self._root
@@ -180,7 +188,7 @@ class Storage:
         return node
 
     def _get_parent(self, path):
-        *names, name = self._split(path) or ['']
+        *names, name = self._split(path) or [""]
 
         if not name:
             raise _error(errno.EEXIST, path)
@@ -206,15 +214,15 @@ class Storage:
             if not node.is_directory():
                 raise _error(errno.ENOTDIR, path)
 
-            return ['.', '..'] + list(node.sub_nodes)
+            return [".", ".."] + list(node.sub_nodes)
 
     @staticmethod
     def _create_file(parent_node, filename, mode):
         now = time.time()
 
-        meta = INodeMeta(st_mode=(stat.S_IFREG | mode),
-                         st_ctime=now, st_mtime=now, st_atime=now,
-                         st_nlink=1)
+        meta = INodeMeta(
+            st_mode=(stat.S_IFREG | mode), st_ctime=now, st_mtime=now, st_atime=now, st_nlink=1
+        )
 
         new_node = INode(filename, meta)
         parent_node.append(new_node)
@@ -225,9 +233,9 @@ class Storage:
     def _create_folder(parent_node, dirname, mode):
         now = time.time()
 
-        meta = INodeMeta(st_mode=(stat.S_IFDIR | mode),
-                         st_ctime=now, st_mtime=now, st_atime=now,
-                         st_nlink=2)
+        meta = INodeMeta(
+            st_mode=(stat.S_IFDIR | mode), st_ctime=now, st_mtime=now, st_atime=now, st_nlink=2
+        )
 
         new_node = INode(dirname, meta)
         parent_node.append(new_node)
@@ -278,7 +286,7 @@ class Storage:
             node = self._get_file(path)
             node.detach()
 
-            self._publish(path, b'')
+            self._publish(path, b"")
 
     def remove_folder(self, path):
         with self._lock:
@@ -334,8 +342,8 @@ class Storage:
             node.name = name
             parent.append(node)
 
-            for old_path, file in zip(old_paths, node.walk_files()):
-                self._publish(old_path, b'')
+            for old_path, file in zip(old_paths, node.walk_files(), strict=True):
+                self._publish(old_path, b"")
                 self._publish(file.path(), file.data)
 
     def chmod(self, path, mode):
@@ -372,7 +380,7 @@ class Storage:
         if isinstance(topic, (bytes, bytearray)):
             topic = topic.decode()
 
-        prefix, *names = topic.split('/')
+        prefix, *names = topic.split("/")
         names = [name for name in names if name]
 
         if prefix != TOPIC_PREFIX or not names:

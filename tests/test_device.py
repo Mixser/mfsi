@@ -52,7 +52,7 @@ class FakeClient:
 
 @pytest.fixture
 def mounted(storage):
-    device = MqttDevice('token', storage, 'tcp://broker')
+    device = MqttDevice("token", storage, "tcp://broker")
     storage.set_device(device)
 
     client = FakeClient()
@@ -69,31 +69,31 @@ def mounted(storage):
 def test_connects_and_subscribes(mounted):
     device, client = mounted
 
-    assert client.url == 'tcp://broker'
-    assert client.username == 'token'
-    assert [(s.topic, s.no_local) for s in client.topics] == [('fs/#', True)]
+    assert client.url == "tcp://broker"
+    assert client.username == "token"
+    assert [(s.topic, s.no_local) for s in client.topics] == [("fs/#", True)]
 
 
 def test_incoming_message_is_applied_to_storage(mounted, storage):
     device, client = mounted
 
     asyncio.run_coroutine_threadsafe(
-        client.queue.put(Message('fs/dir/a.txt', b'hello')), device._loop
+        client.queue.put(Message("fs/dir/a.txt", b"hello")), device._loop
     ).result()
     assert client.processed.wait(2)
 
-    assert storage.read('/dir/a.txt', 100, 0) == b'hello'
+    assert storage.read("/dir/a.txt", 100, 0) == b"hello"
 
 
 def test_publish_from_another_thread(mounted, storage):
     device, client = mounted
 
-    storage.create_file('/a.txt', 0o644)
-    storage.write('/a.txt', b'data', 0)
+    storage.create_file("/a.txt", 0o644)
+    storage.write("/a.txt", b"data", 0)
 
     device.unmount()
 
-    assert client.published == [('fs/a.txt', b'data', True)]
+    assert client.published == [("fs/a.txt", b"data", True)]
     assert not device._thread.is_alive()
 
 
@@ -101,5 +101,5 @@ def test_publish_after_unmount_does_not_raise(mounted, storage):
     device, client = mounted
     device.unmount()
 
-    storage.create_file('/a.txt', 0o644)
-    storage.write('/a.txt', b'data', 0)
+    storage.create_file("/a.txt", 0o644)
+    storage.write("/a.txt", b"data", 0)

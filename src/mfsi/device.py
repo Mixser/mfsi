@@ -21,7 +21,7 @@ class MqttDevice:
         self._thread = None
 
     def mount(self):
-        self._thread = threading.Thread(target=self._daemon, name='mqtt', daemon=True)
+        self._thread = threading.Thread(target=self._daemon, name="mqtt", daemon=True)
         self._thread.start()
 
     def unmount(self):

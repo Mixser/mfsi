@@ -1,5 +1,7 @@
 # mfsi
 
+[![CI](https://github.com/Mixser/mfsi/actions/workflows/ci.yml/badge.svg)](https://github.com/Mixser/mfsi/actions/workflows/ci.yml)
+
 A filesystem in userspace (FUSE) which keeps files as retained MQTT messages.
 Mount it on several machines connected to the same broker, and a file written
 on one of them shows up on the others.
@@ -34,7 +36,7 @@ MQTT client is [zenmqtt](https://github.com/Mixser/zenmqtt).
 
 ## Requirements
 
-- Python 3.12 or newer
+- Python 3.12 or newer, or [uv](https://docs.astral.sh/uv/) which installs it
 - FUSE: [macFUSE](https://osxfuse.github.io) on macOS, `libfuse` on Linux
   (e.g. `apt install fuse`)
 - An MQTT 5 broker; for flespi, a token with access to the `fs/#` topics
@@ -42,12 +44,12 @@ MQTT client is [zenmqtt](https://github.com/Mixser/zenmqtt).
 ## Installation
 
 ```sh
-git clone <repository url> mfsi
+git clone https://github.com/Mixser/mfsi.git
 cd mfsi
-python3.12 -m venv .venv
-. .venv/bin/activate
-pip install .
+uv tool install .
 ```
+
+or without uv: `pip install .` in a Python 3.12+ virtualenv.
 
 ## Usage
 
@@ -73,9 +75,15 @@ Options:
 ## Development
 
 ```sh
-pip install -e '.[dev]'
-pytest
+make install   # uv sync: creates .venv with the package and dev tools
+make lint      # ruff check, ruff format --check
+make format    # fix lint issues and format the code with ruff
+make test      # pytest
+make check     # lint and test, what CI runs
 ```
+
+Dependencies are locked in `uv.lock`; after changing them in `pyproject.toml`
+run `uv lock`. `uv run mfsi <mountpoint>` runs the filesystem from the checkout.
 
 The tests don't mount anything and don't need a broker: the MQTT client is
 replaced with a fake, and when libfuse isn't installed the `fuse` module is

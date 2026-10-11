@@ -16,8 +16,8 @@ dependencies = [
     "fusepy==3.0.1",
 ]
 
-[project.optional-dependencies]
-dev = ["pytest"]
+[dependency-groups]
+dev = ["pytest", "ruff"]
 
 [project.scripts]
 mfsi = "mfsi.cli:main"
@@ -27,3 +27,18 @@ path = "src/mfsi/__init__.py"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle
+    "W",
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # bugbear
+    "UP",  # pyupgrade
+    "SIM", # simplify
+]
