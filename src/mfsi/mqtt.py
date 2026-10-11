@@ -16,9 +16,7 @@ class MqttWrapper:
         self._client = MQTTClient(f"mitu-fs-{time.time()}")
 
     async def initialize(self, token):
-        self._client.authorize(token, None)
-
-        await self._client.connect(self._broker, clean_session=False)
+        await self._client.connect(self._broker, clean_start=False, username=token)
 
         # no_local: our own publishes are already applied to the storage
         await self._client.subscribe([Subscription(TOPIC_PREFIX + "/#", qos=0, no_local=True)])
